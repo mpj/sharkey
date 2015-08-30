@@ -74,7 +74,7 @@ gulp.task('watch', ['compile'], function () {
   livereload.listen()
   gulp.start('webserver-dev')
 
-  watch(['*.html', 'src/**/*.js'], function () {
+  watch(['*.html', 'src/**/*.js','test/**/*.js'], function () {
     runSequence(['compile'], function() {
       livereload.reload('test-runner.html')
     })
