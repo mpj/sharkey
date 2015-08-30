@@ -1,6 +1,8 @@
 import sharkey from '../src/main'
 const logger = console.log.bind(console, '[LOGGER]')
 
+
+
 export default (tape) => {
 
   tape('when passing in connection parameters', (t) => {
@@ -65,6 +67,17 @@ export default (tape) => {
       }
     })
 
+  })
+
+  tape('on socket data', (t) => {
+    t.plan(1)
+
+    t.deepLooseEqual(sharkey({
+      state: { connected: true },
+      message: [ 'net-data', 'msg ' + JSON.stringify({ hello:123 })]
+    }),{
+      messages: [[ 'log', { hello: 123} ]]
+    })
   })
 
 
