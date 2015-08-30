@@ -29,8 +29,8 @@ wb.transform(babelify.configure({
 
 // add our entry file to the watchify-browserify
 // object. Browserify will pull in the rest our
-// app files by traversing imports out from app.js
-wb.add('./src/app.js')
+// test-runner files by traversing imports out from test-runner.js
+wb.add('./runner/browser.js')
 
 gulp.task('compile', function() {
   return wb
@@ -39,20 +39,22 @@ gulp.task('compile', function() {
       // If browserify fails at compiling,
       // we want that to be forwarded to the browser,
       // or we'll be confused why nothing has changed.
-      fs.createWriteStream("build/app.js")
+      var liveReloadScript =
+        'document.write(\'<script src="http://\' + (location.host || \'localhost\').split(\':\')[0] + \':35729/livereload.js?snipver=1"></script>\')';
+      fs.createWriteStream("build/bundle.js")
         .write(
-          'var errStr = "COMPILATION ERROR! '+err.message+'";' +
-          'console.warn(errStr); document.write(errStr)')
+          'var errStr = "COMPILATION ERROR! '+err.message.replace('\\','\\\\') +'";' +
+          'console.warn(errStr); document.write(errStr); '+ liveReloadScript)
       console.warn('Error :', err.message); this.emit('end')
     })
-    .pipe(fs.createWriteStream("build/app.js"))
+    .pipe(fs.createWriteStream("build/bundle.js"))
     // write the whole shabang to teh build dir
 })
 
 gulp.task('webserver-serve', ['compile'] ,function() {
   return gulp.src('.')
     .pipe(webserver({
-      fallback: 'app.html', // defalt page to serve as root
+      fallback: 'test-runner.html', // defalt page to serve as root
       port: 80
     }));
 });
@@ -60,13 +62,13 @@ gulp.task('webserver-serve', ['compile'] ,function() {
 gulp.task('webserver-dev', ['compile'] ,function() {
   return gulp.src('.')
     .pipe(webserver({
-      fallback: 'app.html', // defalt page to serve as root
+      fallback: 'test-runner.html', // defalt page to serve as root
       open: true
     }));
 });
 
-// Task that compiles the app,
-// starts a webserver, watches app directory for changes,
+// Task that compiles the test-runner,
+// starts a webserver, watches test-runner directory for changes,
 // and on change recompiles, and tells livereload to reload.
 gulp.task('watch', ['compile'], function () {
   livereload.listen()
@@ -74,7 +76,7 @@ gulp.task('watch', ['compile'], function () {
 
   watch(['*.html', 'src/**/*.js'], function () {
     runSequence(['compile'], function() {
-      livereload.reload('app.html')
+      livereload.reload('test-runner.html')
     })
   })
 })

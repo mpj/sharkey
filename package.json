@@ -1,11 +1,10 @@
 {
-  "name": "REPLACEME (with something lowercase ascii)",
+  "name": "REPLACEME with something with ascii only",
   "version": "1.0.0",
   "description": "REPLACEME",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "gulp serve",
-    "develop": "gulp dev"
+    "test": "babel-node runner/node",
+    "develop": "gulp"
   },
   "repository": {
     "type": "git",
@@ -19,9 +18,8 @@
   "homepage": "https://github.com/REPLACEME/REPLACME#readme",
   "dependencies": {
     "babelify": "^6.1.3",
-    "bootstrap": "^3.3.5",
     "browserify": "^10.2.6",
-    "deku": "^0.4.9",
+    "browserify-tape-spec": "^1.1.2",
     "gulp": "^3.9.0",
     "gulp-babel": "^5.1.0",
     "gulp-livereload": "^3.8.0",
@@ -30,6 +28,7 @@
     "jquery": "^2.1.4",
     "lodash.assign": "^3.2.0",
     "run-sequence": "^1.1.1",
+    "tape": "^4.2.0",
     "watchify": "^3.2.3"
   }
 }
