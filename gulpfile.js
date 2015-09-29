@@ -9,6 +9,7 @@ var livereload = require('gulp-livereload');
 var runSequence = require('run-sequence');
 var webserver = require('gulp-webserver');
 var assign = require('lodash.assign')
+var socketProxy = require('./runner/socket-proxy')
 
 // Watchify is an extension for browserify
 // that keeps tab on what files are changed
@@ -30,7 +31,7 @@ wb.transform(babelify.configure({
 // add our entry file to the watchify-browserify
 // object. Browserify will pull in the rest our
 // test-runner files by traversing imports out from test-runner.js
-wb.add('./runner/browser.js')
+wb.add('./runner/browser-sandbox.js')
 
 gulp.task('compile', function() {
   return wb
@@ -51,15 +52,9 @@ gulp.task('compile', function() {
     // write the whole shabang to teh build dir
 })
 
-gulp.task('webserver-serve', ['compile'] ,function() {
-  return gulp.src('.')
-    .pipe(webserver({
-      fallback: 'test-runner.html', // defalt page to serve as root
-      port: 80
-    }));
-});
 
 gulp.task('webserver-dev', ['compile'] ,function() {
+  socketProxy()
   return gulp.src('.')
     .pipe(webserver({
       fallback: 'test-runner.html', // defalt page to serve as root
@@ -74,7 +69,7 @@ gulp.task('watch', ['compile'], function () {
   livereload.listen()
   gulp.start('webserver-dev')
 
-  watch(['*.html', 'src/**/*.js','test/**/*.js'], function () {
+  watch(['*.html', 'src/**/*.js','test/**/*.js', 'framework/**/*.js'], function () {
     runSequence(['compile'], function() {
       livereload.reload('test-runner.html')
     })
